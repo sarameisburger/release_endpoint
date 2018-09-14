@@ -6,15 +6,13 @@ require 'open-uri'
 require 'tilt/erb'
 require 'sinatra'
 
-# this is the second tab of the spreasheet, for testing changes to the input data
-# TAPS_URL = 'https://docs.google.com/spreadsheets/d/1SipVaaHNzAbI0F4C-wk_TPxxf8lVG4r4q-nqsI-uQhY/export?format=tsv&gid=1'
+# can add another tab of the spreadsheet for testing
+# RELEASE_URL = n/a
 
-# this is the 'live' tap list
-TAPS_URL = 'https://docs.google.com/spreadsheets/d/1SipVaaHNzAbI0F4C-wk_TPxxf8lVG4r4q-nqsI-uQhY/export?format=tsv&gid=0'
-ON_DECK_URL = 'https://docs.google.com/spreadsheets/d/1SipVaaHNzAbI0F4C-wk_TPxxf8lVG4r4q-nqsI-uQhY/export?format=tsv&gid=382420153'
-BEER_FIELDS =  [:tap, :brewery, :beer_name, :style, :abv, :ibu, :link, :tap_date, :vol, :delivery_date, :origin]
-DEFAULT_VALS = ["Tap 16", "Temporarily", "Offline", "n/a", "n/a",
-                "n/a", "empty", "1/12/1997", "empty", "1/12/1997", "n/a"]
+# upcoming release list
+RELEASE_URL = 'https://docs.google.com/spreadsheets/u/0/d/1JbQg9tG4hqq0lrCu9gP6DZY_ZgI5XwsHnqIzk6xI30M/export?format=tsv&id=1JbQg9tG4hqq0lrCu9gP6DZY_ZgI5XwsHnqIzk6xI30M&gid=0'
+RELEASE_FIELDS =  [:project, :release_date]
+DEFAULT_VALS = ["puppetlabs", "12-08-1994"]
 
 set :port, 8334
 set :bind, '0.0.0.0'
@@ -23,18 +21,13 @@ set :static, true
 set :public_folder, Proc.new { File.join(File.dirname(__FILE__), 'public')  }
 
 get '/' do
-  @kegerator = whats_on_tap(session)
+  @calendar = release_on_deck(session)
   erb :index
 end
 
-get '/api/v1/beer' do
+get '/api/v1/release' do
   content_type :json
-  whats_on_tap(session).to_json
-end
-
-get '/api/v1/ondeck' do
-  content_type :json
-  whats_on_deck(session).to_json
+  release_on_deck(session).to_json
 end
 
 def validate(default,input)
@@ -52,19 +45,15 @@ def parse_sheet(session,url)
     row.force_encoding('UTF-8')
     values = row.split("\t").map(&:strip)
     v = []
-    # :tap, :brewery, :beer_name, :style, :abv, :ibu, :link, :tap_date, :vol, :delivery_date, :origin
+    # :project, :release_date
     DEFAULT_VALS.zip(values).each do |default,value|
       v << validate(default,value)
     end
     v[4].gsub!('%','')     # strip % to avoid confusing erb
-    Hash[BEER_FIELDS.zip(v)]
+    Hash[RELEASE_FIELDS.zip(v)]
   end
 end
 
-def whats_on_tap(session)
-  parse_sheet(session,TAPS_URL)
-end
-
-def whats_on_deck(session)
-  parse_sheet(session,ON_DECK_URL)
+def release_on_deck(session)
+  parse_sheet(session,RELEASE_URL)
 end
