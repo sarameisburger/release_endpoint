@@ -1,9 +1,11 @@
-beer_endpoint
+release_endpoint
 =============
 
-Beer Endpoint for Kegs at Puppet.
+Release Endpoint for Release Info at Puppet.
 
-The production deployment can normally be found at [https://puppet.com/beer](https://puppet.com/beer)
+Adapted from https://github.com/stahnma/beer_endpoint
+
+The production deployment can normally be found at TBD
 
 # How does it work?
 
