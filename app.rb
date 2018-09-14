@@ -21,7 +21,7 @@ set :static, true
 set :public_folder, Proc.new { File.join(File.dirname(__FILE__), 'public')  }
 
 get '/' do
-  @calendar = release_on_deck(session)
+  @release = release_on_deck(session)
   erb :index
 end
 

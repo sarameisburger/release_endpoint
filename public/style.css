@@ -56,7 +56,7 @@ h5 {
 }
 
 .tap-table,
-.beer-data {
+.release-data {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -73,12 +73,12 @@ h5 {
   margin-right: .8em;
 }
 
-.beer-data a {
+.release-data a {
   color: rgba(255,174,26,1);
 }
 
 .empty,
-.empty .beer-data a {
+.empty .release-data a {
   background-color: #222222;
   color: #666;
 }
